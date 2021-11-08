@@ -88,8 +88,7 @@ public class Controller {
 
     private void EditReservation() throws DataException {
         view.displayHeader(MenuOptions.Edit_Reservation.getMessage());
-        List<Host> hosts= hostService.findByState(view.getState());
-        Host host= view.chooseHost(hosts);
+        Host host= getHost();
         if (host == null) {
             return;
         }
@@ -107,8 +106,7 @@ public class Controller {
 
     private void CancelReservation() throws DataException {
         view.displayHeader(MenuOptions.Cancel_Reservation.getMessage());
-        List<Host> hosts= hostService.findByState(view.getState());
-        Host host= view.chooseHost(hosts);
+        Host host= getHost();
         if (host == null) {
             return;
         }

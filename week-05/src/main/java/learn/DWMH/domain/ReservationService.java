@@ -51,7 +51,7 @@ public class ReservationService {
     }
 
     public Result<Reservation> delete(Reservation reservation) throws DataException {
-        Result<Reservation> result = validate(reservation);
+        Result<Reservation> result = validateDelete(reservation);
         if (!result.isSuccess()) {
             return result;
         }
@@ -80,23 +80,19 @@ public class ReservationService {
 
         return result;
     }
-//    private Result<Reservation> validateDelete(Reservation reservation){
-//        Result<Reservation> result= validateNull(reservation);
-//        if (!result.isSuccess()) {
-//            return result;
-//        }
-//        validateFields(reservation,result);
-//        if (!result.isSuccess()) {
-//            return result;
-//        }
-//        validateChildrenExist(reservation,result);
-//        if (!result.isSuccess()) {
-//            return result;
-//        }
-//
-//
-//        return result;
-//    }
+    private Result<Reservation> validateDelete(Reservation reservation){
+        Result<Reservation> result= validateNull(reservation);
+        if (!result.isSuccess()) {
+            return result;
+        }
+        validateChildrenExist(reservation,result);
+        if (!result.isSuccess()) {
+            return result;
+        }
+        validatePast(reservation,result);
+
+        return result;
+    }
 
     private Result<Reservation> validateNull(Reservation reservation){
         Result<Reservation> result = new Result<>();
@@ -156,4 +152,9 @@ public class ReservationService {
         }
     }
 
+    private void validatePast(Reservation reservation, Result<Reservation> result){
+        if (reservation.getStartDate().isBefore(LocalDate.now())){
+            result.addErrorMessage("Can not cancel reservation that has already passed,");
+        }
+    }
 }
