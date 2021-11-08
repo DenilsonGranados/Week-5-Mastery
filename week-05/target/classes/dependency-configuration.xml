@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Define beans here. -->
+    <bean id="consoleIo" class="learn.DWMH.UI.ConsoleIO"></bean>
+
+    <bean id="view" class="learn.DWMH.UI.View">
+        <constructor-arg ref="consoleIo"></constructor-arg>
+    </bean>
+
+    <bean id="HostRepo" class="learn.DWMH.data.HostFileRepository">
+        <constructor-arg value="data/hosts.csv"></constructor-arg>
+    </bean>
+
+    <bean id="GuestRepo" class="learn.DWMH.data.GuestFileRepository">
+        <constructor-arg value="data/guests.csv"></constructor-arg>
+    </bean>
+
+    <bean id="ReservationRepo" class="learn.DWMH.data.ReservationFileRepository">
+        <constructor-arg value="data/reservations"/>
+        <constructor-arg ref="GuestRepo"/>
+        <constructor-arg ref="HostRepo"/>
+    </bean>
+
+    <bean id="HostService" class="learn.DWMH.domain.HostService">
+        <constructor-arg ref="HostRepo"></constructor-arg>
+    </bean>
+
+    <bean id="GuestService" class="learn.DWMH.domain.GuestService">
+        <constructor-arg ref="GuestRepo"></constructor-arg>
+    </bean>
+
+    <bean id="ReservationService" class="learn.DWMH.domain.ReservationService">
+        <constructor-arg ref="ReservationRepo"/>
+        <constructor-arg ref="HostRepo"/>
+        <constructor-arg ref="GuestRepo"/>
+    </bean>
+
+    <bean class="learn.DWMH.UI.Controller">
+        <constructor-arg ref="GuestService"/>
+        <constructor-arg ref="HostService"/>
+        <constructor-arg ref="ReservationService"/>
+        <constructor-arg ref="view"></constructor-arg>
+    </bean>
+</beans>
