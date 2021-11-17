@@ -16,23 +16,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class App {
     public static void main(String[] args) {
 
-            ApplicationContext context = new ClassPathXmlApplicationContext("dependency-configuration.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("dependency-configuration.xml");
 
-            Controller controller = context.getBean(Controller.class);
-            // Run the app!
-            controller.run();
-//        ConsoleIO io = new ConsoleIO();
-//        View view = new View(io);
-//
-//        HostFileRepository hostFileRepository= new HostFileRepository("data/hosts.csv");
-//        GuestFileRepository guestFileRepository = new GuestFileRepository("data/guests.csv");
-//        ReservationFileRepository reservationFileRepository= new ReservationFileRepository("data/reservations");
-//
-//        HostService hostService= new HostService(hostFileRepository);
-//        GuestService guestService= new GuestService(guestFileRepository);
-//        ReservationService reservationService= new ReservationService(reservationFileRepository,hostFileRepository,guestFileRepository);
-//
-//        Controller controller= new Controller(guestService,hostService,reservationService,view);
-//        controller.run();
+        Controller controller = context.getBean(Controller.class);
+        // Run the app!
+        controller.run();
+
     }
 }

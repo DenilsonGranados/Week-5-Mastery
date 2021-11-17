@@ -42,7 +42,7 @@ class ReservationFileRepositoryTest {
         Host host= new Host();
         host.setId("3edda6bc-ab95-49a8-8962-d50b53f84b15");
         Reservation reservation= repository.findById(2,host);
-        assertEquals(new BigDecimal(1020),reservation.getTotal());
+        assertEquals(35,reservation.getGuest().getGuestId());
 
     }
 
@@ -53,7 +53,8 @@ class ReservationFileRepositoryTest {
         host.setId("4c7f5ee4-a822-46c4-95d4-8dba7635922c");
         host.setStandardRate(new BigDecimal(95.00));
         host.setWeekendRate(new BigDecimal(110.00));
-        Guest guest= guestRepo.findById(11);
+        Guest guest= new Guest();
+        guest.setGuestId(1001);
         Reservation reservation = new Reservation(host,guest, LocalDate.of(2020,06,17),LocalDate.of(2020,06,20));
         Reservation actual= repository.add(reservation);
         List<Reservation> reservations = repository.findByHost(host);
@@ -69,12 +70,12 @@ class ReservationFileRepositoryTest {
         host.setStandardRate(new BigDecimal(95.00));
         host.setWeekendRate(new BigDecimal(110.00));
         Guest guest= new Guest();
-        guest.setGuestId(11);
+        guest.setGuestId(1001);
         Reservation reservation = new Reservation(host,guest, LocalDate.of(2020,06,17),LocalDate.of(2020,06,20));
         reservation.setId(1);
         boolean actual= repository.update(reservation);
         assertTrue(actual);
-        assertEquals(11,repository.findById(1,host).getGuest().getGuestId());
+        assertEquals(1001,repository.findById(1,host).getGuest().getGuestId());
 
     }
 
@@ -85,7 +86,7 @@ class ReservationFileRepositoryTest {
         host.setStandardRate(new BigDecimal(95.00));
         host.setWeekendRate(new BigDecimal(110.00));
         Guest guest= new Guest();
-        guest.setGuestId(11);
+        guest.setGuestId(1001);
         Reservation reservation = new Reservation(host,guest, LocalDate.of(2020,06,17),LocalDate.of(2020,06,20));
         reservation.setId(1);
         boolean actual= repository.delete(reservation);

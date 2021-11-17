@@ -13,5 +13,5 @@ public interface HostRepository {
 
     Host add(Host host) throws DataException;
 
-    List<Host> findByLastName(String prefix);
+
 }

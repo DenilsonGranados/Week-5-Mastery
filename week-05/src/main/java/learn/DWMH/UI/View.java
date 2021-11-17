@@ -27,9 +27,21 @@ public class View {
             max = Math.max(max, option.getValue());
         }
 
-        String message = String.format("Select [%s-%s]: ", min, max - 1);
+        String message = String.format("Select [%s-%s]: ", min, max );
         return MenuOptions.fromValue(io.readInt(message, min, max));
     }
+
+    public void printExit(){
+        io.print("Returning to Main Menu");
+    }
+
+    public void noReservations(){
+        io.print("No reservations for this host.Returning to Main Menu");
+    }
+    public void noCancelation(){
+        io.print("Cancelling aborted.Returning to Main Menu");
+    }
+
 
     public void displayHeader(String message) {
         io.println("");
@@ -49,22 +61,58 @@ public class View {
             io.println(message);
         }
     }
+    public int confirmReservation(Reservation reservation){
+        io.printf("%s,%s,%s,%s,%s%n",
+                reservation.getId(),
+                reservation.getStartDate(),
+                reservation.getEndDate(),
+                reservation.getGuest().getGuestId(),
+                reservation.getTotal());
+        return io.readInt("Do you confirm the above reservation? yes[1] or no[0]? ",0,1);
+    }
+
+
+    public void cancelReservation(){
+        io.print("Reservation is cancel.");
+    }
 
     public void displayHostReservation(List<Reservation> reservations){
         if (reservations == null || reservations.isEmpty()) {
             io.println("No reservations found.");
             return;
         }
-        int index=1;
-        io.printf("%-10s%-20s%-20s%-10s%-10s%n","Index","Start","End","Guest Id","Total");
-        for (Reservation res : reservations.stream().limit(25).collect(Collectors.toList())) {
-            io.printf("%-10s%-20s%-20s%-10s%-10s%n", index++, res.getStartDate(), res.getEndDate(),res.getGuest().getGuestId(),res.getTotal());
+        for (Reservation reservation : reservations) {
+            io.printf("%s,%s,%s,%s,%s%n",
+                    reservation.getId(),
+                    reservation.getStartDate(),
+                    reservation.getEndDate(),
+                    reservation.getGuest().getGuestId(),
+                    reservation.getTotal());
         }
     }
     public String getState(){
         return io.readRequiredString("Abbreviation of desired State: ");
     }
 
+    public Host getHost(List<Host> hosts) {
+        Stream<Host> hostStream = hosts.stream();
+        String email;
+        boolean looper=false;
+        do {
+            email = io.readRequiredString("Choose an Host email: ");
+            String finalEmail = email;
+            if (!hostStream.anyMatch(h -> h.getEmail().equalsIgnoreCase(finalEmail))) {
+                System.out.println("That email doesn't match any of the list. Please choose another.");
+                looper=true;
+            }
+        } while (looper);
+        HashMap<String, Host> hostEmailId= new HashMap<>();
+        for(Host host : hosts){
+            hostEmailId.put(host.getEmail(),host);
+        }
+        Host host= hostEmailId.get(email);
+        return host;
+    }
 
     public String getGuestNamePrefix() {
         return io.readRequiredString("Guest last name starts with: ");
@@ -94,9 +142,8 @@ public class View {
             return null;
         }
         int index = 1;
-        io.printf("%-10s%-35s%-18s%-10s%n","Index","Email","First Name","Last Name");
         for (Guest guest : guests.stream().limit(25).collect(Collectors.toList())) {
-            io.printf("%-10s%-35s%-18s%-10s%n", index++, guest.getEmail(),guest.getFirstName(), guest.getLastName());
+            io.printf("%s: %s %s%n", index++, guest.getFirstName(), guest.getLastName());
         }
         index--;
 
@@ -114,15 +161,13 @@ public class View {
     }
 
     public Host chooseHost(List<Host> hosts) {
-
         if (hosts.size() == 0) {
             io.println("No hosts found");
             return null;
         }
         int index = 1;
-        io.printf("%-10s%-35s%-15s%-10s%-10s%n","Index","Email","Last Name","Week Rate","Weekend Rate");
         for (Host host : hosts.stream().limit(25).collect(Collectors.toList())) {
-            io.printf("%-10s%-35s%-15s%-10s%-10s%n", index++, host.getEmail(), host.getLastName(),host.getStandardRate(),host.getWeekendRate());
+            io.printf("%s: %s, %s%n", index++, host.getEmail(), host.getLastName());
         }
         index--;
 
@@ -144,14 +189,13 @@ public class View {
             return null;
         }
         int index = 1;
-        io.printf("%-10s%-10s%-10s%-10s%-10s%n","Index","Start","End","Guest Id","Total");
         for (Reservation res : reservations.stream().limit(25).collect(Collectors.toList())) {
-            io.printf("%-10s%-10s%-10s%-10s%-10s%n", index++, res.getStartDate(), res.getEndDate(),res.getGuest().getGuestId(),res.getTotal());
+            io.printf("%s: %s, %s%n", index++, res.getStartDate(), res.getEndDate());
         }
         index--;
 
         if (reservations.size() > 25) {
-            io.println("More than 25 reservation found. Showing first 25. Please refine your search.");
+            io.println("More than 25 hosts found. Showing first 25. Please refine your search.");
         }
         io.println("0: Exit");
         String message = String.format("Select a reservation by their index [0-%s]: ", index);
