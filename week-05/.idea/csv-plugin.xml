@@ -129,6 +129,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\data\reservations\9cc47e36-6623-4fd5-af83-3f7c1475d9b8.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\data\reservations\c74eb1a7-1be8-422a-9f36-8de5a8b4659b.csv">
           <value>
             <Attribute>

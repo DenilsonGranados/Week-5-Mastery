@@ -81,42 +81,70 @@ public class Controller {
         if (!result.isSuccess()) {
             view.displayStatus(false, result.getErrorMessages());
         } else {
-            String successMessage = String.format("Forage %s created.", result.getPayload().getId());
-            view.displayStatus(true, successMessage);
+            int confirm= view.confirmReservation(result.getPayload());
+            if (confirm == 0) {
+                view.cancelReservation();
+                reservationService.delete(result.getPayload());
+                return;
+            }else {
+                String successMessage = String.format("Reservation %s created.", result.getPayload().getId());
+                view.displayStatus(true, successMessage);
+            }
+
         }
     }
 
     private void EditReservation() throws DataException {
         view.displayHeader(MenuOptions.Edit_Reservation.getMessage());
-        Host host= getHost();
+        List<Host> hosts= hostService.findByState(view.getState());
+        Host host= view.chooseHost(hosts);
         if (host == null) {
             return;
         }
         List<Reservation> reservations= reservationService.findByHost(host);
+        if (reservations.size()==0){
+            view.noReservations();
+            return;
+        }
         Reservation original= view.chooseReservation(reservations);
+        if (original==null){
+            view.printExit();
+            return;
+        }
         Reservation updated= view.updateReservation(original);
         Result<Reservation> result = reservationService.update(updated);
         if (!result.isSuccess()) {
             view.displayStatus(false, result.getErrorMessages());
         } else {
-            String successMessage = String.format("Forage %s updated.", result.getPayload().getId());
+            String successMessage = String.format("Reservation %s updated.", result.getPayload().getId());
             view.displayStatus(true, successMessage);
         }
     }
 
     private void CancelReservation() throws DataException {
         view.displayHeader(MenuOptions.Cancel_Reservation.getMessage());
-        Host host= getHost();
+        List<Host> hosts= hostService.findByState(view.getState());
+        Host host= view.chooseHost(hosts);
         if (host == null) {
             return;
         }
         List<Reservation> reservations= reservationService.findByHost(host);
         Reservation original= view.chooseReservation(reservations);
+        if (original==null){
+            view.printExit();
+            return;
+        }
+        int confirm= view.confirmReservation(original);
+        if (confirm == 0) {
+            view.noCancelation();
+            return;
+        }
         Result<Reservation> result = reservationService.delete(original);
+
         if (!result.isSuccess()) {
             view.displayStatus(false, result.getErrorMessages());
         } else {
-            String successMessage = String.format("Forage %s deleted.", result.getPayload().getId());
+            String successMessage = String.format("Reservation %s deleted.", result.getPayload().getId());
             view.displayStatus(true, successMessage);
         }
     }

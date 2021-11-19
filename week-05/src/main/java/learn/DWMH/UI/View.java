@@ -27,9 +27,21 @@ public class View {
             max = Math.max(max, option.getValue());
         }
 
-        String message = String.format("Select [%s-%s]: ", min, max - 1);
+        String message = String.format("Select [%s-%s]: ", min, max );
         return MenuOptions.fromValue(io.readInt(message, min, max));
     }
+
+    public void printExit(){
+        io.print("Returning to Main Menu");
+    }
+
+    public void noReservations(){
+        io.print("No reservations for this host.Returning to Main Menu");
+    }
+    public void noCancelation(){
+        io.print("Cancelling aborted.Returning to Main Menu");
+    }
+
 
     public void displayHeader(String message) {
         io.println("");
@@ -48,6 +60,20 @@ public class View {
         for (String message : messages) {
             io.println(message);
         }
+    }
+    public int confirmReservation(Reservation reservation){
+        io.printf("%s,%s,%s,%s,%s%n",
+                reservation.getId(),
+                reservation.getStartDate(),
+                reservation.getEndDate(),
+                reservation.getGuest().getGuestId(),
+                reservation.getTotal());
+        return io.readInt("Do you confirm the above reservation? yes[1] or no[0]? ",0,1);
+    }
+
+
+    public void cancelReservation(){
+        io.print("Reservation is cancel.");
     }
 
     public void displayHostReservation(List<Reservation> reservations){
@@ -68,6 +94,25 @@ public class View {
         return io.readRequiredString("Abbreviation of desired State: ");
     }
 
+    public Host getHost(List<Host> hosts) {
+        Stream<Host> hostStream = hosts.stream();
+        String email;
+        boolean looper=false;
+        do {
+            email = io.readRequiredString("Choose an Host email: ");
+            String finalEmail = email;
+            if (!hostStream.anyMatch(h -> h.getEmail().equalsIgnoreCase(finalEmail))) {
+                System.out.println("That email doesn't match any of the list. Please choose another.");
+                looper=true;
+            }
+        } while (looper);
+        HashMap<String, Host> hostEmailId= new HashMap<>();
+        for(Host host : hosts){
+            hostEmailId.put(host.getEmail(),host);
+        }
+        Host host= hostEmailId.get(email);
+        return host;
+    }
 
     public String getGuestNamePrefix() {
         return io.readRequiredString("Guest last name starts with: ");
@@ -150,7 +195,7 @@ public class View {
         index--;
 
         if (reservations.size() > 25) {
-            io.println("More than 25 reservation found. Showing first 25. Please refine your search.");
+            io.println("More than 25 hosts found. Showing first 25. Please refine your search.");
         }
         io.println("0: Exit");
         String message = String.format("Select a reservation by their index [0-%s]: ", index);

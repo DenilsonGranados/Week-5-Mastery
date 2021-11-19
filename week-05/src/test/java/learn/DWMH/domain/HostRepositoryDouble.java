@@ -19,7 +19,7 @@ public class HostRepositoryDouble implements HostRepository {
 
     @Override
     public List<Host> findAll() {
-        return null;
+        return hosts;
     }
 
     @Override
@@ -37,8 +37,4 @@ public class HostRepositoryDouble implements HostRepository {
         return null;
     }
 
-    @Override
-    public List<Host> findByLastName(String prefix) {
-        return null;
-    }
 }

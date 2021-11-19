@@ -105,8 +105,7 @@ public class ReservationFileRepository implements ReservationRepository {
         Host host= reservation.getHost();
         LocalDate date=startDate;
         BigDecimal tot= new BigDecimal(0);
-        while (!date.isEqual(reservation.getEndDate())){
-            date= date.plusDays(1);
+        while (!date.isEqual(reservation.getEndDate().plusDays(1))){
             if (date.getDayOfWeek()== DayOfWeek.MONDAY ||
                     date.getDayOfWeek()== DayOfWeek.TUESDAY ||
                     date.getDayOfWeek()== DayOfWeek.WEDNESDAY ||
@@ -116,7 +115,7 @@ public class ReservationFileRepository implements ReservationRepository {
             }else {
                 tot=tot.add(host.getWeekendRate().setScale(2,RoundingMode.HALF_EVEN));
             }
-
+            date= date.plusDays(1);
         }
         return tot;
     }

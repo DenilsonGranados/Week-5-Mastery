@@ -47,12 +47,6 @@ public class HostFileRepository implements HostRepository {
                 .filter(i -> i.getState().equalsIgnoreCase(stateAbbr))
                 .collect(Collectors.toList());
     }
-    @Override
-    public List<Host> findByLastName(String prefix) {
-        return findAll().stream()
-                .filter(i -> i.getLastName().startsWith(prefix))
-                .collect(Collectors.toList());
-    }
 
     @Override
     public Host findById(String id) {

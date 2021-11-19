@@ -85,11 +85,15 @@ public class ReservationService {
         if (!result.isSuccess()) {
             return result;
         }
+        validateFields(reservation,result);
+        if (!result.isSuccess()) {
+            return result;
+        }
         validateChildrenExist(reservation,result);
         if (!result.isSuccess()) {
             return result;
         }
-        validatePast(reservation,result);
+
 
         return result;
     }
@@ -143,18 +147,13 @@ public class ReservationService {
         //https://stackoverflow.com/questions/17106670/how-to-check-a-timeperiod-is-overlapping-another-time-period-in-java
         List<Reservation> all= reservationRepo.findByHost(reservation.getHost());
         for (Reservation res: all){
-            if (((reservation.getStartDate().isAfter(res.getStartDate()) || reservation.getStartDate().isEqual(res.getStartDate())) &&
-                    (reservation.getStartDate().isBefore(res.getEndDate()))|| reservation.getStartDate().isEqual(res.getEndDate())) ||
-                    ((res.getStartDate().isAfter(reservation.getStartDate()) || res.getStartDate().isEqual(reservation.getStartDate())) &&
-                    ((res.getStartDate().isBefore(reservation.getEndDate())) || res.getStartDate().isEqual(reservation.getEndDate())))){
+            if ((reservation.getStartDate().isAfter(res.getStartDate()) &&
+                    reservation.getStartDate().isBefore(res.getEndDate())) ||
+                    (res.getStartDate().isAfter(reservation.getStartDate())  &&
+                    res.getStartDate().isBefore(reservation.getEndDate()))){
                 result.addErrorMessage("This reservation and reservation "+Integer.toString(res.getId())+" dates overlap");
             }
         }
     }
 
-    private void validatePast(Reservation reservation, Result<Reservation> result){
-        if (reservation.getStartDate().isBefore(LocalDate.now())){
-            result.addErrorMessage("Can not cancel reservation that has already passed,");
-        }
-    }
 }
